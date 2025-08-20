@@ -1,6 +1,8 @@
 import pytest
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options as ChromeOptions
+from selenium.webdriver.firefox.options import Options as FirefoxOptions
 import time
 
 
@@ -20,13 +22,20 @@ def browser_instance(request):
     service_obj = Service()
     driver = None
 
-    if browser_name == "chrome":  # firefox
-        driver = webdriver.Chrome(service=service_obj)
+    if browser_name == "chrome":
+        chrome_options = ChromeOptions()
+        # chrome_options.add_argument("--headless")            # 👈 Run in headless mode
+        chrome_options.add_argument("--disable-gpu")
+        chrome_options.add_argument("--window-size=1920,1080")
+        driver = webdriver.Chrome(service=service_obj, options=chrome_options)
         driver.implicitly_wait(5)
+
     elif browser_name == "firefox":
-        driver = webdriver.Firefox(service=service_obj)
+        firefox_options = FirefoxOptions()
+        firefox_options.add_argument("--headless")           # 👈 Run in headless mode
+        driver = webdriver.Firefox(service=service_obj, options=firefox_options)
         driver.implicitly_wait(15)
 
-    yield driver  # Run before the function execution
+    yield driver  # before test
     time.sleep(5)
-    driver.close()  # Run after the test function execution
+    driver.quit()  # after test
