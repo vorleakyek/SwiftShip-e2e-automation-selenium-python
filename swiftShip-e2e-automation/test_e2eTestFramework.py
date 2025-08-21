@@ -1,6 +1,7 @@
 from selenium.webdriver.common.by import By
 from pageObjects.LoginPage import LoginPage
 from pageObjects.ShopPage import ShopPage
+from pageObjects.Search import Search
 
 
 def test_e2e(browser_instance):
@@ -98,8 +99,14 @@ def test_e2e(browser_instance):
     assert expected_tax == display_tax
     assert expected_total_price == display_total_price
 
-
-
+    # Test Case 4: Search for "book"
+    search = Search(driver)
+    search.search("book")
+    search_result = driver.find_elements(
+        By.XPATH,
+        "//h1[contains(text(),'Search Result')]/following-sibling::div"
+    )
+    assert len(search_result) > 0
 
 
 
